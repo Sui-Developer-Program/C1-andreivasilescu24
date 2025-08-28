@@ -44,8 +44,8 @@ export function TipJar({ refreshKey = 0, onTipSuccess }: TipJarProps) {
           const fields = tipJarObject.data.content.fields as Record<string, unknown>;
           setTipJarStats({
             owner: String(fields.owner || ''),
-            totalTips: String(fields.total_tips_received || '0'),
-            tipCount: String(fields.tip_count || '0'),
+            totalTips: String(fields.balance || '0'),
+            tipCount: String(fields.total_tips || '0'),
           });
         }
       } catch (error) {
