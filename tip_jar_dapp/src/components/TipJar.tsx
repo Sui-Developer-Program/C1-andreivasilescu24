@@ -132,85 +132,99 @@ export function TipJar({ refreshKey = 0, onTipSuccess }: TipJarProps) {
 
   if (!currentAccount) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">💰 Simple Tip Jar</h2>
-        <p className="text-gray-600">Please connect your wallet to send tips.</p>
+      <div className="relative bg-white rounded-lg shadow-md p-6 overflow-hidden">
+        {/* Animated background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-blue-300 to-cyan-200 animate-pulse opacity-20"></div>
+        <div className="absolute inset-0 bg-gradient-to-tl from-blue-400 via-purple-300 to-pink-200 animate-pulse opacity-15" style={{ animationDelay: '1s' }}></div>
+        
+        <div className="relative z-10">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">💰 Simple Tip Jar</h2>
+          <p className="text-gray-600">Please connect your wallet to send tips.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">💰 Simple Tip Jar</h2>
+    <div className="relative bg-white rounded-lg shadow-md p-6 overflow-hidden">
+      {/* Animated background layers */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-blue-300 to-cyan-200 animate-pulse opacity-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-tl from-blue-400 via-purple-300 to-pink-200 animate-pulse opacity-15" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-indigo-300 via-purple-200 to-blue-300 animate-pulse opacity-10" style={{ animationDelay: '2s' }}></div>
 
-      {/* Tip Jar Statistics */}
-      {tipJarStats && (
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Statistics</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">
-                {(parseInt(tipJarStats.totalTips) / 1_000_000_000).toFixed(3)}
-              </p>
-              <p className="text-sm text-gray-600">Total SUI Received</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">{tipJarStats.tipCount}</p>
-              <p className="text-sm text-gray-600">Number of Tips</p>
-            </div>
-            <div className="text-center">
-              <p className="text-xs text-gray-500 break-all">
-                Owner: {tipJarStats.owner.slice(0, 8)}...{tipJarStats.owner.slice(-6)}
-              </p>
+      {/* Content with relative positioning to stay above background */}
+      <div className="relative z-10">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">💰 Simple Tip Jar</h2>
+
+        {/* Tip Jar Statistics */}
+        {tipJarStats && (
+          <div className="bg-white/70 backdrop-blur-sm rounded-lg p-4 mb-6 border border-white/50">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Statistics</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-blue-600">
+                  {(parseInt(tipJarStats.totalTips) / 1_000_000_000).toFixed(3)}
+                </p>
+                <p className="text-sm text-gray-600">Total SUI Received</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">{tipJarStats.tipCount}</p>
+                <p className="text-sm text-gray-600">Number of Tips</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 break-all">
+                  Owner: {tipJarStats.owner.slice(0, 8)}...{tipJarStats.owner.slice(-6)}
+                </p>
+              </div>
             </div>
           </div>
+        )}
+
+        {/* Send Tip Section */}
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="tip-amount" className="block text-sm font-medium text-gray-700 mb-1">
+              Tip Amount (SUI)
+            </label>
+            <input
+              type="number"
+              id="tip-amount"
+              value={tipAmount}
+              onChange={(e) => setTipAmount(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white/80 backdrop-blur-sm"
+              placeholder="0.1"
+              step="0.001"
+              min="0"
+              disabled={isLoading}
+            />
+          </div>
+
+          <div className="flex items-center justify-center space-x-2 text-sm text-green-600 bg-green-50/80 backdrop-blur-sm py-2 px-3 rounded-md border border-green-200/50">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span>Gas-Free Transaction via Enoki</span>
+          </div>
+
+          <button
+            onClick={sendTip}
+            disabled={isLoading || !tipAmount || parseFloat(tipAmount) <= 0}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-blue-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-md"
+          >
+            {isLoading ? 'Sending Tip (Gas-Free)...' : 'Send Tip (Free)'}
+          </button>
         </div>
-      )}
 
-      {/* Send Tip Section */}
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="tip-amount" className="block text-sm font-medium text-gray-700 mb-1">
-            Tip Amount (SUI)
-          </label>
-          <input
-            type="number"
-            id="tip-amount"
-            value={tipAmount}
-            onChange={(e) => setTipAmount(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            placeholder="0.1"
-            step="0.001"
-            min="0"
-            disabled={isLoading}
-          />
+        {/* Instructions */}
+        <div className="mt-6 bg-blue-50/80 backdrop-blur-sm border border-blue-200/50 p-4 rounded-lg">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">How it works</h3>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>• Enter the amount you want to tip in SUI</li>
+            <li>• Click &quot;Send Tip&quot; to send your tip</li>
+            <li>• All transactions are sponsored (gas-free) via Enoki</li>
+            <li>• Tips are sent directly to the tip jar owner</li>
+          </ul>
         </div>
-
-        <div className="flex items-center justify-center space-x-2 text-sm text-green-600 bg-green-50 py-2 px-3 rounded-md">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          <span>Gas-Free Transaction via Enoki</span>
-        </div>
-
-        <button
-          onClick={sendTip}
-          disabled={isLoading || !tipAmount || parseFloat(tipAmount) <= 0}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-        >
-          {isLoading ? 'Sending Tip (Gas-Free)...' : 'Send Tip (Free)'}
-        </button>
-      </div>
-
-      {/* Instructions */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 p-4 rounded-lg">
-        <h3 className="text-sm font-semibold text-blue-900 mb-2">How it works</h3>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Enter the amount you want to tip in SUI</li>
-          <li>• Click &quot;Send Tip&quot; to send your tip</li>
-          <li>• All transactions are sponsored (gas-free) via Enoki</li>
-          <li>• Tips are sent directly to the tip jar owner</li>
-        </ul>
       </div>
     </div>
   );
